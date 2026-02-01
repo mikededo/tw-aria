@@ -14,6 +14,28 @@ Install the plugin with:
 bun add tw-aria
 ```
 
+### Tailwind CSS v4
+
+Add the plugin to your main CSS file using the `@plugin` directive:
+
+```css
+@import "tailwindcss";
+@plugin "tw-aria";
+```
+
+To filter specific ARIA attributes (optional):
+
+```css
+@import "tailwindcss";
+@plugin "tw-aria" {
+  expanded: true;
+  checked: true;
+  disabled: true;
+}
+```
+
+### Tailwind CSS v3
+
 Add the plugin to your `tailwind.config.{js,ts}` file:
 
 ```typescript
@@ -22,6 +44,18 @@ import twAria from 'tw-aria';
 
 export default {
   plugins: [twAria()],
+  // ... rest of the configuration
+} satisfies Config;
+```
+
+To filter specific ARIA attributes (optional):
+
+```typescript
+import type { Config } from 'tailwindcss';
+import twAria from 'tw-aria';
+
+export default {
+  plugins: [twAria({ expanded: true, checked: true, disabled: true })],
   // ... rest of the configuration
 } satisfies Config;
 ```
