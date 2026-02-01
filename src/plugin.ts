@@ -13,7 +13,6 @@ export const ARIA = {
   details: ['true'],
   disabled: BOOL,
   dropeffect: ['none', 'copy', 'execute', 'link', 'move', 'popup'],
-  errorMessage: ['true'],
   errormessage: ['true'],
   expanded: BOOL,
   flowto: ['true'],
@@ -48,29 +47,42 @@ export const ARIA = {
   valuetext: ['true'],
 };
 
-export type Aria = (config?: Partial<Record<keyof typeof ARIA, true>>) => ReturnType<typeof plugin>;
-export const aria: Aria = (config) => plugin(({ addVariant }) => {
-  let key: keyof typeof ARIA;
-  for (key in ARIA) {
-    // Skip if the attribute is not enabled in the config
-    if (config && !config[key]) {
-      continue;
-    }
+export type AriaConfig = Partial<Record<keyof typeof ARIA, true>>;
 
-    if (ARIA[key] instanceof Function) {
-      continue;
-    }
+/**
+ * Tailwind CSS plugin that adds ARIA attribute variants.
+ *
+ * In Tailwind v4, use:
+ * ```css
+ * @plugin "tw-aria";
+ * ```
+ *
+ * With options (to filter specific attributes):
+ * ```css
+ * @plugin "tw-aria" {
+ *   expanded: true;
+ *   checked: true;
+ * }
+ * ```
+ */
+export const aria = plugin.withOptions<AriaConfig | undefined>(
+  (config) => ({ addVariant }) => {
+    Object.entries(ARIA).forEach(([key, values]) => {
+      if (config && !config[key as keyof typeof ARIA]) {
+        return;
+      }
 
-    ARIA[key].forEach((element: number | string) => {
-      const selector = element === 'true'
-        ? `aria-${key}`
-        : element === 'false'
-          ? `aria-not-${key}`
-          : `aria-${key}-${element}`;
+      values.forEach((element) => {
+        const selector = element === 'true'
+          ? `aria-${key}`
+          : element === 'false'
+            ? `aria-not-${key}`
+            : `aria-${key}-${element}`;
 
-      addVariant(selector, [`[aria-${key}="${element}"] &`, `&[aria-${key}="${element}"]`]);
-      addVariant(`group-${selector}`, `.group[aria-${key}="${element}"] &`);
-      addVariant(`peer-${selector}`, `.peer[aria-${key}="${element}"] ~ &`);
+        addVariant(selector, [`&[aria-${key}="${element}"]`, `[aria-${key}="${element}"] &`]);
+        addVariant(`group-${selector}`, `:where(.group)[aria-${key}="${element}"] &`);
+        addVariant(`peer-${selector}`, `:where(.peer)[aria-${key}="${element}"] ~ &`);
+      });
     });
-  }
-});
+  },
+);
