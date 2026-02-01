@@ -1,5 +1,11 @@
 # tw-aria
 
+## 1.2.0
+
+### Minor Changes
+
+- Add Tailwind CSS v3 support and switch to `plugin.withOptions` API for better v4 `@plugin` directive support ([`01e7554`](https://github.com/mikededo/tw-aria/commit/01e7554c37efe5705e5785fe1a1ccbd899d8d0dd))
+
 ## 1.1.1
 
 ### Patch Changes
