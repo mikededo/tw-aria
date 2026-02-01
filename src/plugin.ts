@@ -1,3 +1,4 @@
+import type { PluginCreator } from 'tailwindcss/types/config';
 import plugin from 'tailwindcss/plugin';
 
 export const BOOL = ['false', 'true'];
@@ -65,7 +66,7 @@ export type AriaConfig = Partial<Record<keyof typeof ARIA, true>>;
  * }
  * ```
  */
-export const aria = plugin.withOptions<AriaConfig | undefined>(
+export const aria: { (options?: AriaConfig): { handler: PluginCreator; config?: Partial<{ theme: Record<string, unknown> }> }; __isOptionsFunction: true } = plugin.withOptions<AriaConfig | undefined>(
   (config) => ({ addVariant }) => {
     Object.entries(ARIA).forEach(([key, values]) => {
       if (config && !config[key as keyof typeof ARIA]) {
